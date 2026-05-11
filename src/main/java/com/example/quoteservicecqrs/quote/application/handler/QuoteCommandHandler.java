@@ -1,6 +1,8 @@
 package com.example.quoteservicecqrs.quote.application.handler;
 
-import com.example.quoteservice.common.exception.NotFoundException;
+
+import com.example.quoteservicecqrs.common.event.DomainEventPublisher;
+import com.example.quoteservicecqrs.common.exception.NotFoundException;
 import com.example.quoteservicecqrs.quote.application.command.ApproveQuoteCommand;
 import com.example.quoteservicecqrs.quote.application.command.CreateQuoteCommand;
 import com.example.quoteservicecqrs.quote.application.command.SubmitQuoteCommand;
@@ -20,9 +22,13 @@ public class QuoteCommandHandler {
 
     private final Map<String, QuoteAggregate> aggregateStore = new ConcurrentHashMap<>();
 
-    private final QuoteSyncWorkflow quoteSyncWorkflow;
-    public QuoteCommandHandler(QuoteSyncWorkflow quoteSyncWorkflow) {
-        this.quoteSyncWorkflow = quoteSyncWorkflow;
+//    private final QuoteSyncWorkflow quoteSyncWorkflow;
+//    public QuoteCommandHandler(QuoteSyncWorkflow quoteSyncWorkflow) {
+//        this.quoteSyncWorkflow = quoteSyncWorkflow;
+//    }
+    private final DomainEventPublisher eventPublisher;
+    public QuoteCommandHandler(DomainEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
     }
 
     public QuoteResponse handle(CreateQuoteCommand command) {
@@ -35,7 +41,8 @@ public class QuoteCommandHandler {
 
         // Ngày 1 chỉ return response.
         // Ngày sau sẽ publish event cho Workflow.
-        quoteSyncWorkflow.onQuoteCreated(event);
+//        quoteSyncWorkflow.onQuoteCreated(event);
+        eventPublisher.publish(event);
 
         return new QuoteResponse(
                 aggregate.getId(),
@@ -49,7 +56,8 @@ public class QuoteCommandHandler {
 
         QuoteSubmittedEvent event = aggregate.submit(command);
         aggregate.apply(event);
-        quoteSyncWorkflow.onQuoteSubmitted(event);
+//        quoteSyncWorkflow.onQuoteSubmitted(event);
+        eventPublisher.publish(event);
 
         return new QuoteResponse(
                 aggregate.getId(),
@@ -62,7 +70,8 @@ public class QuoteCommandHandler {
 
         QuoteApprovedEvent event = aggregate.approve(command);
         aggregate.apply(event);
-        quoteSyncWorkflow.onQuoteApproved(event);
+//        quoteSyncWorkflow.onQuoteApproved(event);
+        eventPublisher.publish(event);
 
         return new QuoteResponse(
                 aggregate.getId(),

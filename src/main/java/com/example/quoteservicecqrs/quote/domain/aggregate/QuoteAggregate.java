@@ -1,6 +1,6 @@
 package com.example.quoteservicecqrs.quote.domain.aggregate;
 
-import com.example.quoteservice.common.exception.BusinessException;
+import com.example.quoteservicecqrs.common.exception.BusinessException;
 import com.example.quoteservicecqrs.quote.application.command.ApproveQuoteCommand;
 import com.example.quoteservicecqrs.quote.application.command.CreateQuoteCommand;
 import com.example.quoteservicecqrs.quote.application.command.SubmitQuoteCommand;

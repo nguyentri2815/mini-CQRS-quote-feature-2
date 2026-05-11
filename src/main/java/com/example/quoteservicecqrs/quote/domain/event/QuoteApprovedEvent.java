@@ -1,8 +1,10 @@
 package com.example.quoteservicecqrs.quote.domain.event;
 
+import com.example.quoteservicecqrs.common.event.DomainEvent;
+
 import java.time.LocalDateTime;
 
-public class QuoteApprovedEvent {
+public class QuoteApprovedEvent implements DomainEvent {
 
     private final String quoteId;
     private final String approvedBy;
@@ -29,4 +31,20 @@ public class QuoteApprovedEvent {
     public LocalDateTime getOccurredAt() {
         return occurredAt;
     }
+
+    @Override
+    public String eventName() {
+        return "QuoteApprovedEvent";
+    }
+
+    @Override
+    public String aggregateId() {
+        return quoteId;
+    }
+
+    @Override
+    public LocalDateTime occurredAt() {
+        return occurredAt;
+    }
+
 }
