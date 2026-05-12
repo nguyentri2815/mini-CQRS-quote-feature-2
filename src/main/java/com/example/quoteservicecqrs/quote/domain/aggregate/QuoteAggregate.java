@@ -9,17 +9,43 @@ import com.example.quoteservicecqrs.quote.domain.event.QuoteCreatedEvent;
 import com.example.quoteservicecqrs.quote.domain.event.QuoteSubmittedEvent;
 import com.example.quoteservicecqrs.quote.domain.model.QuoteStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class QuoteAggregate {
 
     private String id;
+    private String quoteNumber;
+    private String customerName;
+    private String productCode;
+    private BigDecimal premium;
     private QuoteStatus status;
 
-    // Xử lý command
+    public static QuoteAggregate restore(
+            String id,
+            String quoteNumber,
+            String customerName,
+            String productCode,
+            BigDecimal premium,
+            QuoteStatus status
+    ) {
+        QuoteAggregate aggregate = new QuoteAggregate();
+        aggregate.id = id;
+        aggregate.quoteNumber = quoteNumber;
+        aggregate.customerName = customerName;
+        aggregate.productCode = productCode;
+        aggregate.premium = premium;
+        aggregate.status = status;
+        return aggregate;
+    }
+
     public QuoteCreatedEvent create(CreateQuoteCommand command) {
         this.id = UUID.randomUUID().toString();
+        this.quoteNumber = generateQuoteNumber();
+        this.customerName = command.getCustomerName();
+        this.productCode = command.getProductCode();
+        this.premium = command.getPremium();
         this.status = QuoteStatus.DRAFT;
 
         return new QuoteCreatedEvent(
@@ -57,7 +83,6 @@ public class QuoteAggregate {
         );
     }
 
-    //apply event
     public void apply(QuoteCreatedEvent event) {
         this.id = event.getQuoteId();
         this.status = QuoteStatus.DRAFT;
@@ -75,7 +100,27 @@ public class QuoteAggregate {
         return id;
     }
 
+    public String getQuoteNumber() {
+        return quoteNumber;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public BigDecimal getPremium() {
+        return premium;
+    }
+
     public QuoteStatus getStatus() {
         return status;
+    }
+
+    private String generateQuoteNumber() {
+        return "Q-" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 8);
     }
 }
