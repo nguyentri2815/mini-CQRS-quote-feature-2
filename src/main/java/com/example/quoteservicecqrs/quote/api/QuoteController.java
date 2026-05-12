@@ -3,11 +3,15 @@ package com.example.quoteservicecqrs.quote.api;
 import com.example.quoteservicecqrs.quote.application.command.ApproveQuoteCommand;
 import com.example.quoteservicecqrs.quote.application.command.SubmitQuoteCommand;
 import com.example.quoteservicecqrs.quote.application.dto.QuoteCreateRequest;
+import com.example.quoteservicecqrs.quote.application.dto.QuoteListItemResponse;
 import com.example.quoteservicecqrs.quote.application.dto.QuoteResponse;
 import com.example.quoteservicecqrs.quote.application.handler.QuoteCommandHandler;
 import com.example.quoteservicecqrs.quote.application.mapper.QuoteApiMapper;
+import com.example.quoteservicecqrs.quote.query.QuoteSearchService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/quotes")
@@ -15,13 +19,16 @@ public class QuoteController {
 
     private final QuoteCommandHandler quoteCommandHandler;
     private final QuoteApiMapper quoteApiMapper;
+    private final QuoteSearchService quoteSearchService;
 
     public QuoteController(
             QuoteCommandHandler quoteCommandHandler,
-            QuoteApiMapper quoteApiMapper
+            QuoteApiMapper quoteApiMapper,
+            QuoteSearchService quoteSearchService
     ) {
         this.quoteCommandHandler = quoteCommandHandler;
         this.quoteApiMapper = quoteApiMapper;
+        this.quoteSearchService = quoteSearchService;
     }
 
     @PostMapping
@@ -50,4 +57,13 @@ public class QuoteController {
 
         return quoteCommandHandler.handle(command);
     }
+
+    @GetMapping
+    public List<QuoteListItemResponse> list(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status
+    ) {
+        return quoteSearchService.list(keyword, status);
+    }
+
 }

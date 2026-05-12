@@ -2,20 +2,30 @@ package com.example.quoteservicecqrs.quote.domain.event;
 
 import com.example.quoteservicecqrs.common.event.DomainEvent;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class QuoteCreatedEvent implements DomainEvent {
 
     private final String quoteId;
+    private final String customerName;
+    private final String productCode;
+    private final BigDecimal premium;
     private final String createdBy;
     private final LocalDateTime occurredAt;
 
     public QuoteCreatedEvent(
             String quoteId,
+            String customerName,
+            String productCode,
+            BigDecimal premium,
             String createdBy,
             LocalDateTime occurredAt
     ) {
         this.quoteId = quoteId;
+        this.customerName = customerName;
+        this.productCode = productCode;
+        this.premium = premium;
         this.createdBy = createdBy;
         this.occurredAt = occurredAt;
     }
@@ -24,12 +34,20 @@ public class QuoteCreatedEvent implements DomainEvent {
         return quoteId;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public LocalDateTime getOccurredAt() {
-        return occurredAt;
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public BigDecimal getPremium() {
+        return premium;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
     }
 
     @Override

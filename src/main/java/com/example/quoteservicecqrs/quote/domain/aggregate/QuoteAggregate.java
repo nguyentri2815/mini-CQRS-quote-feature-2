@@ -50,6 +50,9 @@ public class QuoteAggregate {
 
         return new QuoteCreatedEvent(
                 this.id,
+                command.getCustomerName(),
+                command.getProductCode(),
+                command.getPremium(),
                 command.getCreatedBy(),
                 LocalDateTime.now()
         );
@@ -85,6 +88,9 @@ public class QuoteAggregate {
 
     public void apply(QuoteCreatedEvent event) {
         this.id = event.getQuoteId();
+        this.customerName = event.getCustomerName();
+        this.productCode = event.getProductCode();
+        this.premium = event.getPremium();
         this.status = QuoteStatus.DRAFT;
     }
 
